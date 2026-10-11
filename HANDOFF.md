@@ -169,6 +169,13 @@ you want the notification path to actually fire while testing, point
 Dedupe is **global on `encounter_id`** across both passes — a spawn satisfying
 both alerts exactly once.
 
+**Bug fixed 2026-10-11:** `seen.json` had never actually persisted — the file
+was untracked (allowlist .gitignore) and `git diff` ignores untracked files,
+so the persist step no-op'd every run and cloud dedupe lived only within a
+single tick. Now `seen.json` is force-tracked and the persist step uses
+`git add -f` + `git status --porcelain`. Effect of the fix: a live hit no
+longer re-alerts on every 5-min tick until despawn.
+
 **Volume warning:** a common species at 100% IV is a *firehose*. Gastly hundos
 run ~7 live at any moment with 15–30 min despawns, so expect on the order of
 15–25 alerts/hour. Pass B is **currently OFF** — `HUNDO_IDS` was deleted from

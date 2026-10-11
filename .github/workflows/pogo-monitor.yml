@@ -67,14 +67,19 @@ jobs:
       - name: Persist seen store
         # Never fail the run just because dedupe state couldn't be written —
         # worst case is one duplicate alert, which beats a red build.
+        #
+        # seen.json is force-added: the repo uses an allowlist .gitignore and
+        # seen.json is not on it. Also: `git diff` does NOT see untracked
+        # files — before 2026-10-11 this step silently never committed and
+        # cloud dedupe never persisted. `git status --porcelain` catches it.
         if: always()
         run: |
           git config user.name "pogo-monitor[bot]"
           git config user.email "pogo-monitor@users.noreply.github.com"
-          if git diff --quiet -- seen.json; then
+          if [ -z "$(git status --porcelain -- seen.json)" ]; then
             echo "seen.json unchanged — nothing to commit"
             exit 0
           fi
-          git add seen.json
+          git add -f seen.json
           git commit -m "chore: update seen store [skip ci]" || exit 0
           git push || echo "push failed (likely concurrent run) — non-fatal"
