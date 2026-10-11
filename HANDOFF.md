@@ -221,15 +221,10 @@ its own ntfy topic, its own dedupe store. Built **2026-10-11**.
 | seen.json | **independent** dedupe store, seeded empty at creation |
 | cron | identical `*/5 * * * *` |
 
-**Current state: workflow DISABLED** — the monitor `exit(1)`s without
-`POGO_JWT`, and red runs are noise. To bring instance 2 live:
-
-1. Capture the 2nd site account's JWT (same flow as CAP-BYPASS: log in on
-   pogocoordinates.com, grab `localStorage["jwt"]` from devtools).
-2. `Get-Content jwt2.txt | gh secret set POGO_JWT --repo maftynehnoa-dot/pogotracker2`
-3. `gh workflow enable pogo-monitor --repo maftynehnoa-dot/pogotracker2`
-4. Subscribe the new topic in the ntfy app (topic is in the p2 clone's
-   `ntfy_topic.txt`).
+**State: LIVE** since 2026-10-11. JWT captured (2nd site account, Google
+login), secret set, workflow enabled. Verified: run `38152598315` green,
+`tier=logged_in` cap 10, first alert delivered, `seen.json` persisted by the
+fixed step (`chore: update seen store` commit `3137d9f`).
 
 **Sync note:** once both repos run once, their `seen.json` histories diverge
 independently — code changes must be pushed to each repo separately. If
@@ -291,9 +286,8 @@ allowlist gitignore keeps `jwt.txt` out of history. Keep it that way.
 
 ## 9. Open threads (not started)
 
-- [x] Two-trainer variant — **instance 2 built 2026-10-11** (repo
-      `pogotracker2`, clone `G:\AI\poketracker2`). Workflow disabled until the
-      2nd site account's JWT is captured — see §5b.
+- [x] Two-trainer variant — **instance 2 LIVE 2026-10-11** (repo
+      `pogotracker2`, clone `G:\AI\poketracker2`, separate topic). See §5b.
 - [ ] Local monitor permanently retired vs kept as fallback — currently stopped.
 - [ ] Old folder shell `G:\AI\site hack` still locked by the opencode process;
       deletes after reboot / opencode close. Harmless.
