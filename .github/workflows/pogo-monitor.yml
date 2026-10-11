@@ -4,9 +4,12 @@ name: pogo-monitor
 #
 # EDIT THESE WITHOUT TOUCHING CODE
 #   Settings -> Secrets and variables -> Actions -> Variables
-#     SPECIES_IDS   comma-separated dex ids. default 4,1,7
-#     MIN_IV        default 100
-#     SHINY         "true" or "false"
+#     SPECIES_IDS   shiny watch. comma-separated dex ids. default 4,1,7
+#     SHINY         "true" or "false" — toggle for the SPECIES_IDS pass
+#     HUNDO_IDS     SECOND pass, ignores shiny entirely and just watches for
+#                   perfect IV. default off. Point this at a common species if
+#                   you want the notification path to actually fire.
+#     MIN_IV        shared IV floor for both passes. default 100
 #   ... and -> Secrets (hidden, do not commit these)
 #     POGO_JWT      your pogocoordinates session token
 #     NTFY_TOPIC    your ntfy.sh topic name
@@ -56,6 +59,7 @@ jobs:
           POGO_JWT: ${{ secrets.POGO_JWT }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           SPECIES_IDS: ${{ vars.SPECIES_IDS }}
+          HUNDO_IDS: ${{ vars.HUNDO_IDS }}
           MIN_IV: ${{ vars.MIN_IV }}
           SHINY: ${{ vars.SHINY }}
         run: node cloud/cloud-monitor.mjs
