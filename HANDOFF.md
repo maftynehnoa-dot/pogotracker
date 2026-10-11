@@ -150,7 +150,7 @@ CAP-BYPASS.md                        the reverse-engineering notes
 | Secret | `NTFY_TOPIC` | value of `ntfy_topic.txt` (never inline it here) |
 | Variable | `SPECIES_IDS` | `4,1,7` — **pass A**, the shiny watch (Charmander/Bulbasaur/Squirtle) |
 | Variable | `SHINY` | `true` — pass A shiny toggle |
-| Variable | `HUNDO_IDS` | `92` — **pass B**, ignores shiny, watches plain perfect IV (Gastly) |
+| Variable | `HUNDO_IDS` | *(deleted 2026-10-11)* — **pass B off**; was `92` (Gastly hundo test) |
 | Variable | `MIN_IV` | `100` — shared by both passes |
 
 ### Two watch passes
@@ -171,8 +171,9 @@ both alerts exactly once.
 
 **Volume warning:** a common species at 100% IV is a *firehose*. Gastly hundos
 run ~7 live at any moment with 15–30 min despawns, so expect on the order of
-15–25 alerts/hour. Turn pass B off when done testing by clearing `HUNDO_IDS`
-in Variables (empty string disables it — pass A keeps running).
+15–25 alerts/hour. Pass B is **currently OFF** — `HUNDO_IDS` was deleted from
+Repo Variables on 2026-10-11 after testing finished. Pass A keeps running.
+Re-enable with `gh variable set HUNDO_IDS --body "92"`.
 
 - Cron: `*/5 * * * *` — **UTC**, may lag a minute or two under load.
 - Trigger: `workflow_dispatch` for manual runs.
