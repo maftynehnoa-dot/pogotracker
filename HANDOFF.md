@@ -217,7 +217,7 @@ its own ntfy topic, its own dedupe store. Built **2026-10-11**.
 | trainer | 2nd site account; ID lives in `G:\AI\poketracker2\trainer_id.txt` (gitignored). Not published. |
 | site JWT | 2nd site account (`trainer_cap`=1 forces a separate login); mirrored to that repo's `POGO_JWT` secret |
 | ntfy topic | NEW topic, local `G:\AI\poketracker2\ntfy_topic.txt` + secret `NTFY_TOPIC` |
-| vars | same as instance 1: `SPECIES_IDS=4,1,7` `SHINY=true` `MIN_IV=100`, no `HUNDO_IDS` |
+| vars | `SPECIES_IDS=4,1,7` `SHINY=true` `MIN_IV=100` (pass A, shiny). Pass B **live since 2026-10-12**: `HUNDO_IDS=374,375,111,112,529,530` — Beldum/Metang/Rhyhorn/Rhydon/Roggenrola/Boldore at plain 100% IV, Kovak request. |
 | seen.json | **independent** dedupe store, seeded empty at creation |
 | cron | identical `*/5 * * * *` |
 
