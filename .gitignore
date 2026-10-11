@@ -1,0 +1,17 @@
+# Secrets — never commit these. Set them in the repo settings instead.
+.env
+*.env
+jwt.txt
+secrets.json
+
+# Dedupe store is committed by the workflow, but ignore local test runs.
+seen.local.json
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS cruft
+.DS_Store
+Thumbs.db
+desktop.ini

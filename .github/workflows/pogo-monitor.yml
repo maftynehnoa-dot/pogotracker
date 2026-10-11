@@ -1,0 +1,75 @@
+name: pogo-monitor
+
+# Scheduled spawn watcher. Runs cloud-monitor.mjs once per tick and exits.
+#
+# EDIT THESE WITHOUT TOUCHING CODE
+#   Settings -> Secrets and variables -> Actions -> Variables
+#     SPECIES_IDS   comma-separated dex ids. default 4,1,7
+#     MIN_IV        default 100
+#     SHINY         "true" or "false"
+#   ... and -> Secrets (hidden, do not commit these)
+#     POGO_JWT      your pogocoordinates session token
+#     NTFY_TOPIC    your ntfy.sh topic name
+#
+# CRON IS UTC. */5 = every 5 minutes. GitHub may lag a minute or two under
+# load — that is normal, not a bug.
+#
+# Heads-up: GitHub auto-disables scheduled workflows after 60 days with no
+# repo activity. Commit anything (even a README typo) to keep it alive.
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch: {}
+
+# Don't let two runs overlap; if a tick is still going, skip the next.
+concurrency:
+  group: pogo-monitor
+  cancel-in-progress: false
+
+# contents:write is needed to commit the seen.json dedupe file back.
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history so the seen.json commit stacks correctly.
+          fetch-depth: 0
+          # Default GITHUB_TOKEN can't trigger other workflows, which is what
+          # we want — this commit should not kick off a second run.
+          persist-credentials: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run monitor
+        env:
+          POGO_JWT: ${{ secrets.POGO_JWT }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          SPECIES_IDS: ${{ vars.SPECIES_IDS }}
+          MIN_IV: ${{ vars.MIN_IV }}
+          SHINY: ${{ vars.SHINY }}
+        run: node cloud/cloud-monitor.mjs
+
+      - name: Persist seen store
+        # Never fail the run just because dedupe state couldn't be written —
+        # worst case is one duplicate alert, which beats a red build.
+        if: always()
+        run: |
+          git config user.name "pogo-monitor[bot]"
+          git config user.email "pogo-monitor@users.noreply.github.com"
+          if git diff --quiet -- seen.json; then
+            echo "seen.json unchanged — nothing to commit"
+            exit 0
+          fi
+          git add seen.json
+          git commit -m "chore: update seen store [skip ci]" || exit 0
+          git push || echo "push failed (likely concurrent run) — non-fatal"
