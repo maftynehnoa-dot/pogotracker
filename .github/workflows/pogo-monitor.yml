@@ -48,7 +48,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # 20 is deprecated on Actions runners — 22 is the current LTS.
+          node-version: "22"
 
       - name: Run monitor
         env:
