@@ -197,6 +197,39 @@ Re-enable with `gh variable set HUNDO_IDS --body "92"`.
 
 ---
 
+## 5b. Instance 2 — `pogotracker2`
+
+A 1:1 second deployment on the **same GitHub account** (`maftynehnoa-dot`),
+separate repo `pogotracker2`, for a second trainer — its own site account,
+its own ntfy topic, its own dedupe store. Built **2026-10-11**.
+
+| item | value |
+|---|---|
+| repo | https://github.com/maftynehnoa-dot/pogotracker2 (PUBLIC) |
+| workbench clone | `G:\AI\poketracker2` — separate directory, identical layout |
+| trainer | 2nd site account; ID lives in `G:\AI\poketracker2\trainer_id.txt` (gitignored). Not published. |
+| site JWT | 2nd site account (`trainer_cap`=1 forces a separate login); mirrored to that repo's `POGO_JWT` secret |
+| ntfy topic | NEW topic, local `G:\AI\poketracker2\ntfy_topic.txt` + secret `NTFY_TOPIC` |
+| vars | same as instance 1: `SPECIES_IDS=4,1,7` `SHINY=true` `MIN_IV=100`, no `HUNDO_IDS` |
+| seen.json | **independent** dedupe store, seeded empty at creation |
+| cron | identical `*/5 * * * *` |
+
+**Current state: workflow DISABLED** — the monitor `exit(1)`s without
+`POGO_JWT`, and red runs are noise. To bring instance 2 live:
+
+1. Capture the 2nd site account's JWT (same flow as CAP-BYPASS: log in on
+   pogocoordinates.com, grab `localStorage["jwt"]` from devtools).
+2. `Get-Content jwt2.txt | gh secret set POGO_JWT --repo maftynehnoa-dot/pogotracker2`
+3. `gh workflow enable pogo-monitor --repo maftynehnoa-dot/pogotracker2`
+4. Subscribe the new topic in the ntfy app (topic is in the p2 clone's
+   `ntfy_topic.txt`).
+
+**Sync note:** once both repos run once, their `seen.json` histories diverge
+independently — code changes must be pushed to each repo separately. If
+merging across, always keep each side's own `seen.json`.
+
+---
+
 ## 6. Local files (workbench, NOT all tracked)
 
 This folder `G:\AI\poketracker` is a git clone of the repo with an **allowlist
@@ -233,8 +266,9 @@ node monitor.mjs --ids 4,1,7 --interval 180 > monitor_log.txt 2>&1
   `reveal.mjs` takes a spec path). Use `;` not `&&`.
 - **PowerShell splits `gh api` / `--jq` arguments** on `?`, `=`, and spaces.
   Build the URL in a variable, or avoid `--jq` and `ConvertFrom-Json` instead.
-- git + gh are installed; `git config --global user.name/email` are **unset**
-  (commits use `-c user.name=... -c user.email=...` inline).
+- git + gh are installed; `git config --global user.name/email` are unset —
+  each clone has **repo-local** identity instead (`maftynehnoa-dot` /
+  noreply address).
 - Node 20+ available locally.
 
 ---
@@ -250,8 +284,9 @@ allowlist gitignore keeps `jwt.txt` out of history. Keep it that way.
 
 ## 9. Open threads (not started)
 
-- [ ] Two-trainer variant: 2nd site account + 2nd JWT + 2nd ntfy topic, so two
-      trainers alert to separate topics. Kovak asked about this; not built.
+- [x] Two-trainer variant — **instance 2 built 2026-10-11** (repo
+      `pogotracker2`, clone `G:\AI\poketracker2`). Workflow disabled until the
+      2nd site account's JWT is captured — see §5b.
 - [ ] Local monitor permanently retired vs kept as fallback — currently stopped.
 - [ ] Old folder shell `G:\AI\site hack` still locked by the opencode process;
       deletes after reboot / opencode close. Harmless.
