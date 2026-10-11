@@ -1,17 +1,26 @@
-# Secrets — never commit these. Set them in the repo settings instead.
-.env
-*.env
+# ALLOWLIST MODE.
+# This folder is a research workbench: scraped Next.js chunks, captured HTML,
+# probe query specs, run logs, harvested spawn dumps, and session credentials.
+# None of that belongs in the repo. Ignore everything, then switch back only
+# what is source.
+*
+!*/
+
+# --- tracked: docs ---
+!.gitignore
+!.gitattributes
+!README.md
+!CAP-BYPASS.md
+!HANDOFF.md
+
+# --- tracked: source ---
+!*.mjs
+!.github/
+!.github/**
+
+# Belt and braces: these would never survive the allowlist above, but name them
+# explicitly so a future `git add -f` can never slip them through.
 jwt.txt
-secrets.json
-
-# Dedupe store is committed by the workflow, but ignore local test runs.
-seen.local.json
-
-# Node
-node_modules/
-npm-debug.log*
-
-# OS cruft
-.DS_Store
-Thumbs.db
-desktop.ini
+ntfy_topic.txt
+trainer_id.txt
+*.token
