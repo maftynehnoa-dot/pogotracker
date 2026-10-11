@@ -22,7 +22,11 @@ name: pogo-monitor
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    # Offset phase (:02,:07,:12,... UTC), NOT */5 — every round minute (:00,
+    # :05, ...) is where the Actions scheduler pileup happens and scheduled
+    # runs queue 10-20+ min behind. Dodging the round marks measurably cuts
+    # the drift. Same 5-min cadence otherwise.
+    - cron: "2-57/5 * * * *"
   workflow_dispatch: {}
 
 # Don't let two runs overlap; if a tick is still going, skip the next.

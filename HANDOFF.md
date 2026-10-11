@@ -182,7 +182,10 @@ run ~7 live at any moment with 15–30 min despawns, so expect on the order of
 Repo Variables on 2026-10-11 after testing finished. Pass A keeps running.
 Re-enable with `gh variable set HUNDO_IDS --body "92"`.
 
-- Cron: `*/5 * * * *` — **UTC**, may lag a minute or two under load.
+- Cron: `2-57/5 * * * *` — **UTC** phase offset (:02,:07,:12…). Round minutes
+  (`*/5`) are where GitHub's scheduler piles up and ticks drift 10–20 min; the
+  offset dodges the worst of it. Remaining drift under platform load is
+  GitHub-side and not fixable from our end.
 - Trigger: `workflow_dispatch` for manual runs.
 - `permissions: contents: write` so the run can commit `seen.json`.
 - `concurrency: pogo-monitor`, `cancel-in-progress: false` — no overlap.
@@ -219,7 +222,7 @@ its own ntfy topic, its own dedupe store. Built **2026-10-11**.
 | ntfy topic | NEW topic, local `G:\AI\poketracker2\ntfy_topic.txt` + secret `NTFY_TOPIC` |
 | vars | `SHINY=true` `MIN_IV=100`, pass B (`HUNDO_IDS`) off. **Pass A = shiny + 100% IV** on `SPECIES_IDS=4,1,7,374,375,111,112,529,530` — starters + Beldum/Metang/Rhyhorn/Rhydon/Roggenrola/Boldore (2026-10-12 correction: Kovak wanted shiny+hundo, not plain hundo). |
 | seen.json | **independent** dedupe store, seeded empty at creation |
-| cron | identical `*/5 * * * *` |
+| cron | `4-59/5 * * * *` (:04,:09,… UTC) — same 5-min cadence, offset phase vs instance 1 so the two don't land on the same minute |
 
 **State: LIVE** since 2026-10-11. JWT captured (2nd site account, Google
 login), secret set, workflow enabled. Verified: run `38152598315` green,
