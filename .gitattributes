@@ -1,0 +1,6 @@
+# Workflow YAML must be LF — CRLF line endings can break Actions parsing.
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.mjs   text eol=lf
+*.json  text eol=lf
+*.md    text eol=lf
