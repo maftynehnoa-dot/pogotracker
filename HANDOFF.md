@@ -148,9 +148,31 @@ CAP-BYPASS.md                        the reverse-engineering notes
 |---|---|---|
 | Secret | `POGO_JWT` | from `jwt.txt` |
 | Secret | `NTFY_TOPIC` | value of `ntfy_topic.txt` (never inline it here) |
-| Variable | `SPECIES_IDS` | `4,1,7` (Charmander, Bulbasaur, Squirtle) |
-| Variable | `MIN_IV` | `100` |
-| Variable | `SHINY` | `true` |
+| Variable | `SPECIES_IDS` | `4,1,7` — **pass A**, the shiny watch (Charmander/Bulbasaur/Squirtle) |
+| Variable | `SHINY` | `true` — pass A shiny toggle |
+| Variable | `HUNDO_IDS` | `92` — **pass B**, ignores shiny, watches plain perfect IV (Gastly) |
+| Variable | `MIN_IV` | `100` — shared by both passes |
+
+### Two watch passes
+
+`cloud-monitor.mjs` runs up to two independent queries per tick:
+
+- **pass A** `SPECIES_IDS` + `SHINY` — the original shiny watch.
+- **pass B** `HUNDO_IDS` — a second filter that sets `shiny_only:false` and
+  watches for perfect IV regardless of shininess.
+
+Pass B exists because shiny **+** hundo together is genuinely rare (probe on
+2026-10-11: shiny Gastly hundo = 0 live, plain Gastly hundo = **7 live**). If
+you want the notification path to actually fire while testing, point
+`HUNDO_IDS` at a common species.
+
+Dedupe is **global on `encounter_id`** across both passes — a spawn satisfying
+both alerts exactly once.
+
+**Volume warning:** a common species at 100% IV is a *firehose*. Gastly hundos
+run ~7 live at any moment with 15–30 min despawns, so expect on the order of
+15–25 alerts/hour. Turn pass B off when done testing by clearing `HUNDO_IDS`
+in Variables (empty string disables it — pass A keeps running).
 
 - Cron: `*/5 * * * *` — **UTC**, may lag a minute or two under load.
 - Trigger: `workflow_dispatch` for manual runs.
