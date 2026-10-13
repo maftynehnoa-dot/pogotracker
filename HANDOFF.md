@@ -235,6 +235,37 @@ merging across, always keep each side's own `seen.json`.
 
 ---
 
+## 5c. Instance 3 — `pogotracker3`
+
+A third deployment under a **separate GitHub account** (`StellaNoxFleurette`),
+Kovak's explicit call — this repo must NOT live under `maftynehnoa-dot`.
+Own site account, own ntfy topic, own dedupe store. Built **2026-10-13**.
+
+| item | value |
+|---|---|
+| repo | https://github.com/StellaNoxFleurette/pogotracker3 (PUBLIC) |
+| workbench clone | `G:\AI\poketracker3` — separate directory, identical layout |
+| GitHub auth | the account's own PAT, classic, **no expiration**, scopes `gist, repo, workflow`, note `pogotracker3-ci`. `gh` CLI on this machine is STILL authed as `maftynehnoa-dot` — never re-login it. Drive this repo with `GH_TOKEN=<pat>` env override instead. |
+| push auth | remote URL embeds the PAT (`.git/config`, untracked). If push/`ls-remote` returns 401 → PAT revoked/rotated: mint a new one at the account's `settings/tokens` (scopes `repo workflow gist`, no expiration), then `git remote set-url origin https://x-access-token:<pat>@github.com/StellaNoxFleurette/pogotracker3.git` |
+| GitHub session | lives in a throwaway Chrome profile (`%LOCALAPPDATA%\Temp\opencode\gh3_profile`, CDP port 9333) — main Chrome never touched. Login itself was done by hand in that window; scripted POSTs to github.com/login are WAF-blocked (422 "browser did something unexpected"), so don't retry script login. |
+| site login | 3rd site account; sub/name/ID live in `jwt.txt` + `trainer_id.txt` (gitignored). Not published. |
+| site JWT | 3rd site account (`trainer_cap`=1 forces a separate login) → secret `POGO_JWT` |
+| ntfy topic | NEW topic, local `G:\AI\poketracker3\ntfy_topic.txt` + secret `NTFY_TOPIC`. Kovak must subscribe to it in the ntfy app. |
+| vars | `SPECIES_IDS=4,1,7` `SHINY=true` `MIN_IV=100`, pass B (`HUNDO_IDS`) off — same watch as instance 1 |
+| seen.json | **independent** dedupe store, seeded `{}` and **force-added in the root commit** — the allowlist gitignore hides it, and the persist step's `git status --porcelain` never sees ignored files (the exact silent-failure documented in §5a's step comment) |
+| cron | `6-59/5 * * * *` (:06,:11,… UTC) — 5-min cadence, phase-offset vs instance 1 (:02) and 2 (:04) |
+
+**State: LIVE** since 2026-10-13. Manual dispatch run `38350559593` green
+(8/8 steps), `tier=logged_in` cap 10, shiny pass `[4,1,7]`, seen store
+persisted. Same 60-day auto-disable caveat as the other two (§10).
+
+**Token hygiene:** exactly ONE PAT exists for this account
+(`pogotracker3-ci`). A cleanup pass during setup deleted an earlier keeper by
+mismatching token rows — if `gh`/push ever 401s, mint per the push-auth row
+above rather than assuming the JWT is broken.
+
+---
+
 ## 6. Local files (workbench, NOT all tracked)
 
 This folder `G:\AI\poketracker` is a git clone of the repo with an **allowlist
@@ -291,6 +322,9 @@ allowlist gitignore keeps `jwt.txt` out of history. Keep it that way.
 
 - [x] Two-trainer variant — **instance 2 LIVE 2026-10-11** (repo
       `pogotracker2`, clone `G:\AI\poketracker2`, separate topic). See §5b.
+- [x] Third-trainer variant — **instance 3 LIVE 2026-10-13** (separate GitHub
+      account `StellaNoxFleurette`, repo `pogotracker3`, clone
+      `G:\AI\poketracker3`, separate topic, cron :06 phase). See §5c.
 - [ ] Local monitor permanently retired vs kept as fallback — currently stopped.
 - [ ] Old folder shell `G:\AI\site hack` still locked by the opencode process;
       deletes after reboot / opencode close. Harmless.
