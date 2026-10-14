@@ -1,7 +1,7 @@
 # HANDOFF — pogotracker
 
 > Dense state dump for a fresh session. Read this first; it is self-contained.
-> Last updated **2026-10-11**, live on GitHub Actions.
+> Last updated **2026-10-14**, live on GitHub Actions.
 
 ---
 
@@ -251,7 +251,7 @@ Own site account, own ntfy topic, own dedupe store. Built **2026-10-13**.
 | site login | 3rd site account; sub/name/ID live in `jwt.txt` + `trainer_id.txt` (gitignored). Not published. |
 | site JWT | 3rd site account (`trainer_cap`=1 forces a separate login) → secret `POGO_JWT` |
 | ntfy topic | NEW topic, local `G:\AI\poketracker3\ntfy_topic.txt` + secret `NTFY_TOPIC`. Kovak must subscribe to it in the ntfy app. |
-| vars | `SPECIES_IDS=4,1,7` `SHINY=true` `MIN_IV=100`, pass B (`HUNDO_IDS`) off — same watch as instance 1 |
+| vars | `SPECIES_IDS=any` `SHINY=true` `MIN_IV=100`, pass B (`HUNDO_IDS`) off. **2026-10-14: track list REMOVED** (Kovak's call) — watch is now Shiny + 100% IV on ALL species, not just 4,1,7. `SPECIES_IDS=any` (sentinel, also accepts `all`/blank) → `pokemon_ids:[]` = no species filter server-side (same primitive as `monitor.mjs --any-species`). Was `MIN_IV=0` (any IV) + 7 species `25,4,7,1,58,37,133` before this change. |
 | seen.json | **independent** dedupe store, seeded `{}` and **force-added in the root commit** — the allowlist gitignore hides it, and the persist step's `git status --porcelain` never sees ignored files (the exact silent-failure documented in §5a's step comment) |
 | cron | `6-59/5 * * * *` (:06,:11,… UTC) — 5-min cadence, phase-offset vs instance 1 (:02) and 2 (:04) |
 
