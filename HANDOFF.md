@@ -148,7 +148,7 @@ CAP-BYPASS.md                        the reverse-engineering notes
 |---|---|---|
 | Secret | `POGO_JWT` | from `jwt.txt` |
 | Secret | `NTFY_TOPIC` | value of `ntfy_topic.txt` (never inline it here) |
-| Variable | `SPECIES_IDS` | `4,1,7` — **pass A**, the shiny watch (Charmander/Bulbasaur/Squirtle) |
+| Variable | `SPECIES_IDS` | `4,1,7,133` — **pass A**, the shiny watch (Charmander/Bulbasaur/Squirtle + **Eevee**, added 2026-10-15). Shiny + 100% IV, so a hundo Eevee only. |
 | Variable | `SHINY` | `true` — pass A shiny toggle |
 | Variable | `HUNDO_IDS` | *(deleted 2026-10-11)* — **pass B off**; was `92` (Gastly hundo test) |
 | Variable | `MIN_IV` | `100` — shared by both passes |
